@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.Math.min;
 import static java.lang.StrictMath.max;
 
 public class EpochActivity extends AppCompatActivity {
@@ -123,6 +124,7 @@ public class EpochActivity extends AppCompatActivity {
         trainRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (!documentSnapshot.exists()){return;}
                 boolean done = documentSnapshot.getBoolean("done");
                 if (done && isConnected){
                     status = 0;
@@ -180,12 +182,13 @@ public class EpochActivity extends AppCompatActivity {
         }
         connectionService.stopConnection(modelKey);
         stopDialog.setVisibility(View.GONE);
+        status = 0;
     }
 
     public void updateProgressBar(Map<String, String> info, boolean done) {
-        EpochObject obj = epochsListAdapter.getItem(epoch_num);
-        obj.progress = 5;
-        Log.i("DEBUG", info.remove("progress").toString());
+        int epoch = min(Integer.parseInt(info.remove("epoch")), epochsListAdapter.getCount()-1);
+        EpochObject obj = epochsListAdapter.getItem(epoch);
+        obj.progress = Integer.parseInt(info.remove("progress"));
         obj.done = done;
         obj.info = (HashMap<String, String>) info;
         epochsListAdapter.notifyDataSetChanged();
@@ -213,6 +216,30 @@ public class EpochActivity extends AppCompatActivity {
         //Setting the title manually
         alert.setTitle("Confirm Stopping");
         alert.show();
+    }
+
+    public void trainingEnded() {
+        status = 0;
+        connectionService.closeConnection(modelKey);
+        epochsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                stopDialog.setVisibility(View.GONE);
+                epochsListAdapter.clear();
+                for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
+                    int epoch_num = Integer.parseInt(documentSnapshot.getId());
+                    Map<String, Object> hm = documentSnapshot.getData();
+                    HashMap<String, String> info = new HashMap<String, String>();
+                    for (Map.Entry e: hm.entrySet()) {
+                        info.put(e.getKey().toString(), e.getValue().toString());
+                    }
+                    boolean done = (boolean) hm.remove("done");
+                    int progress = Integer.parseInt((String) hm.remove("progress"));
+                    epochsListAdapter.add(new EpochObject(epoch_num, progress, done, info));
+                }
+                epochsListAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

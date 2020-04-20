@@ -82,6 +82,31 @@ public class TrainingsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        trainsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                trainingListAdapter.clear();
+                for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots){
+                    HashMap<String, Object> hm = (HashMap<String, Object>) documentSnapshot.getData();
+                    String Id = documentSnapshot.getId();
+                    boolean done = (boolean) hm.remove("done");
+                    int steps = Integer.parseInt((String) hm.remove("steps"));
+                    int status = done?0:1;
+                    if (hm.containsKey("error")) {
+                        status = -1;
+                        hm.remove("error");
+                    }
+                    trainingListAdapter.add(new TrainingItem(Id, hm, status, steps));
+                }
+                trainingListAdapter.notifyDataSetChanged();
+            }
+        });
+
+        super.onStart();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

@@ -62,16 +62,16 @@ public class ConnectionService extends Service {
 
     public void closeConnection(String modelKey) {
         ConnectionObject connection = connections.get(modelKey);
-        if (connection.isRunning)
+        if (connection != null && connection.isRunning)
             connection.close();
-        connections.remove(modelKey);
+            connections.remove(modelKey);
     }
 
     public void stopConnection(String modelKey) {
         ConnectionObject connection = connections.get(modelKey);
-        if (connection.isRunning)
+        if (connection != null && connection.isRunning)
             connection.stop();
-        connections.remove(modelKey);
+            connections.remove(modelKey);
     }
 
     public void unbindActivity(String modelKey) {
@@ -125,7 +125,7 @@ public class ConnectionService extends Service {
             @Override
             protected void onProgressUpdate(Boolean... values) {
                 boolean status = values[0];
-                if (!false){
+                if (!status){
                     activity.loader.setVisibility(View.VISIBLE);
                 }else {
                     Toast.makeText(activity, "Epoch stopped", Toast.LENGTH_SHORT).show();
@@ -194,25 +194,28 @@ public class ConnectionService extends Service {
             protected void onProgressUpdate(String... params) {
                 super.onProgressUpdate();
                 String jsonString = params[0];
-                JSONObject obj = new JSONObject();
+
+                HashMap<String, String> json = new HashMap<String, String>();
+                JSONObject jObject = null;
                 try {
-                    obj = new JSONObject(jsonString);
+                    jObject = new JSONObject(jsonString);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Iterator<?> keys = jObject.keys();
 
-                HashMap<String, String > json = new HashMap<String, String>();
-                Iterator<String> keys = obj.keys();
-                while(keys.hasNext()) {
-                    String key = keys.next();
+                while( keys.hasNext() ){
+                    String key = (String)keys.next();
+                    String value = null;
                     try {
-                        if (obj.get(key) instanceof JSONObject) {
-                            json.put(key, ((JSONObject) obj.get(key)).toString());
-                        }
+                        value = jObject.getString(key);
                     } catch (JSONException e) {
+                        Log.i("DEBUG JSON", jsonString);
                         e.printStackTrace();
                     }
+                    json.put(key, value);
                 }
+
                 String event_type = (String) json.remove("type");
                 if (event_type.equals("epoch_begin")) {
                     activity.addNewEpoch(json);
@@ -220,6 +223,8 @@ public class ConnectionService extends Service {
                     activity.updateProgressBar(json, false);
                 } else if (event_type.equals("epoch_end")){
                     activity.updateProgressBar(json, true);
+                } else if (event_type.equals("train_end")) {
+                    activity.trainingEnded();
                 }
             }
         }
