@@ -14,4 +14,9 @@
     <string name="home_second">Home Second</string>
     <string name="my_models_string">My Models</string>
     <string name="view_trainings">VIEW TRAININGS</string>
+    <string name="settings_label">Settings</string>
+    <string name="logout_label">Logout?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -92,7 +92,6 @@ public class EpochActivity extends AppCompatActivity {
 
         loader = (ProgressBar) findViewById(R.id.loader);
         loader.setIndeterminate(true);
-        loader.setVisibility(View.INVISIBLE);
 
         epochsListView = (ListView) findViewById(R.id.epochsListView);
         epochsList = new ArrayList<EpochObject>();
@@ -142,14 +141,17 @@ public class EpochActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
                     int epoch_num = Integer.parseInt(documentSnapshot.getId());
                     Map<String, Object> hm = documentSnapshot.getData();
+                    boolean done = (boolean) hm.remove("done");
+                    int progress = Integer.parseInt((String) hm.remove("progress"));
+                    hm.remove("type");
+                    hm.remove("training_id");
                     HashMap<String, String> info = new HashMap<String, String>();
                     for (Map.Entry e: hm.entrySet()) {
                         info.put(e.getKey().toString(), e.getValue().toString());
                     }
-                    boolean done = (boolean) hm.remove("done");
-                    int progress = Integer.parseInt((String) hm.remove("progress"));
                     epochsListAdapter.add(new EpochObject(epoch_num, progress, done, info));
                 }
+                loader.setVisibility(View.GONE);
                 if (status == 1){
                     EpochObject obj = epochsListAdapter.getItem(EpochActivity.this.epoch_num);
                     if (obj.done) {
@@ -177,9 +179,7 @@ public class EpochActivity extends AppCompatActivity {
     }
 
     public void stopEpoch(){
-        synchronized (connection){
-            connection.notify();
-        }
+        isConnected = false;
         connectionService.stopConnection(modelKey);
         stopDialog.setVisibility(View.GONE);
         status = 0;
@@ -221,6 +221,7 @@ public class EpochActivity extends AppCompatActivity {
     public void trainingEnded() {
         status = 0;
         connectionService.closeConnection(modelKey);
+        isConnected = false;
         epochsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -230,11 +231,13 @@ public class EpochActivity extends AppCompatActivity {
                     int epoch_num = Integer.parseInt(documentSnapshot.getId());
                     Map<String, Object> hm = documentSnapshot.getData();
                     HashMap<String, String> info = new HashMap<String, String>();
+                    boolean done = (boolean) hm.remove("done");
+                    int progress = Integer.parseInt((String) hm.remove("progress"));
+                    hm.remove("type");
+                    hm.remove("training_id");
                     for (Map.Entry e: hm.entrySet()) {
                         info.put(e.getKey().toString(), e.getValue().toString());
                     }
-                    boolean done = (boolean) hm.remove("done");
-                    int progress = Integer.parseInt((String) hm.remove("progress"));
                     epochsListAdapter.add(new EpochObject(epoch_num, progress, done, info));
                 }
                 epochsListAdapter.notifyDataSetChanged();

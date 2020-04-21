@@ -27,6 +27,26 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.dltracker.ui.settings.SettingsFragment"
+        android:label="@string/settings_label"
+        tools:layout="@layout/fragment_models">
+        <action
+            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
+            app:destination="@id/nav_home_second" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_logout"
+        android:name="com.example.dltracker.ui.LogoutFragment"
+        android:label="@string/logout_label"
+        tools:layout="@layout/fragment_models">
+        <action
+            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
+            app:destination="@id/nav_home_second" />
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_home_second"
         android:name="com.example.dltracker.ui.home.HomeSecondFragment"
         android:label="@string/home_second"

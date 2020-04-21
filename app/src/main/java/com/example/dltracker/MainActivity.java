@@ -32,6 +32,7 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    TextView profileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,24 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         View navHeader = navigationView.getHeaderView(0);
-        TextView profileName = (TextView) navHeader.findViewById(R.id.profileName);
+        profileName = (TextView) navHeader.findViewById(R.id.profileName);
         TextView profileUser = (TextView) navHeader.findViewById(R.id.profileUser);
         profileName.setText(name);
         profileUser.setText(username);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.nav_settings:
-                        openSettings();
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
-            }
-        });
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -95,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public void openSettings(){
-        Toast.makeText(getApplicationContext(), "Settings clicked", Toast.LENGTH_SHORT).show();
+    public void resetNavBar(String name) {
+        profileName.setText(name);
     }
+
 }
