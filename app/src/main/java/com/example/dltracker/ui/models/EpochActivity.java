@@ -127,8 +127,7 @@ public class EpochActivity extends AppCompatActivity {
                 boolean done = documentSnapshot.getBoolean("done");
                 if (done && isConnected){
                     status = 0;
-                    unbindService(connection);
-                    isConnected = false;
+                    connectionService.unbindActivity(modelKey);
                 }
             }
         });
@@ -179,7 +178,6 @@ public class EpochActivity extends AppCompatActivity {
     }
 
     public void stopEpoch(){
-        isConnected = false;
         connectionService.stopConnection(modelKey);
         stopDialog.setVisibility(View.GONE);
         status = 0;
@@ -221,7 +219,6 @@ public class EpochActivity extends AppCompatActivity {
     public void trainingEnded() {
         status = 0;
         connectionService.closeConnection(modelKey);
-        isConnected = false;
         epochsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -258,7 +255,7 @@ public class EpochActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (status == 1)
+        if (isConnected)
             unbindService(connection);
         super.onDestroy();
     }

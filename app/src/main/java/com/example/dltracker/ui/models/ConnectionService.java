@@ -76,7 +76,8 @@ public class ConnectionService extends Service {
 
     public void unbindActivity(String modelKey) {
         ConnectionObject connection = connections.get(modelKey);
-        connection.setActivity(null);
+        if (connection != null)
+            connection.setActivity(null);
     }
 
     public int getNumEpochs(String modelKey) {
