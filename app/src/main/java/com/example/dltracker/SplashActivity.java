@@ -10,7 +10,7 @@ import android.os.Handler;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static int TIME_OUT = 500;
+    public static int TIME_OUT = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
