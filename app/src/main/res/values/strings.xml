@@ -19,15 +19,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="intro_text">Track and Manage training of Tensorflow and Keras models remotely.\n\n
+    <string name="intro_text">Track and Manage training of your Tensorflow and Keras models remotely.\n\n
         This app lets you\n\t1. view model training(s) and related metrics\n
         \t2. manage model training(s)\n
-        \t3. Stop model training remotely</string>
-    <string name="instruction_text">Firstly, download the dl_tracker python package from the following link:\n
-        \t https://github.com/thevarunsharma/dl_tracker\n\n
-        Create a new model in the app by going to \"My Models\" tab. Copy the model key.\n\n
-        Pass this model key along with your password as parameters to the new dl_tracker.Tracker instance in Python.\n\n
-        While calling model.fit on the model instance pass the created Tracker instance in the list of callbacks.
+        \t3. terminate (stop) model training remotely</string>
+    <string name="instruction_text">Firstly, make sure that you have added the dl_tracker python-package into your current working directory.\n\nThe package can be downloaded from the following link:\n
+        https://github.com/thevarunsharma/dl_tracker\n\nCreate a new model in the app by going to \"My Models\" tab. Copy the model key.\n\nPass this model key along with your password as parameters to the new dl_tracker.Tracker instance in Python.\n\nWhile calling fit(or fit_generator) method on the model instance, pass the created Tracker instance in the list of callbacks.
     </string>
     <string name="demo_code_snippet">from dl_tracker import Tracker\ntracker = Tracker(model_key, password)\nmodel.fit(...,\n\tcallbacks=[tracker, ...])</string>
 </resources>

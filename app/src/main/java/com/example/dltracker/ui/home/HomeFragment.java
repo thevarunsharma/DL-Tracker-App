@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -25,10 +24,6 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        ConstraintLayout introLayout = (ConstraintLayout) root.findViewById(R.id.intro);
-        ConstraintLayout instructions = (ConstraintLayout) root.findViewById(R.id.instructions);
-        introLayout.getBackground().setTint(Color.parseColor("#4186C3"));
-        instructions.getBackground().setTint(Color.parseColor("#CF041C"));
         return root;
     }
 }
