@@ -143,32 +143,33 @@ public class ModelsFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String m_Text = modelNameInput.getText().toString();
-                Map<String, Object> data = new HashMap<String, Object>();
-                data.put("modelName", m_Text);
-                data.put("train_count", 0);
-                String color = colors[(new Random()).nextInt(6)];
-                data.put("color", color);
 
-                modelsRef.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                Map<String, String> hm = new HashMap<String, String>();
+                hm.put("username", username);
+                db.collection("model_keys").add(hm).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(final DocumentReference documentReference) {
+                    public void onSuccess(DocumentReference documentReference) {
                         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 String modelKey = documentSnapshot.getId();
-                                String modelName = documentSnapshot.getString("modelName");
-                                String color = documentSnapshot.getString("color");
-                                ModelListItem obj = new ModelListItem(modelName, modelKey, color);
-                                Map<String, String> hm = new HashMap<String, String>();
-                                hm.put("username", username);
-                                db.document("model_keys/"+modelKey).set(hm);
-                                modelsItems.add(obj);
-                                modelListAdaptor = new ModelListAdapter(getContext(), ModelsFragment.this, modelsItems);
-                                modelsListView.setAdapter(modelListAdaptor);
-                                filter = modelListAdaptor.getFilter();
+                                Map<String, Object> data = new HashMap<String, Object>();
+                                data.put("modelName", m_Text);
+                                data.put("train_count", 0);
+                                String color = colors[(new Random()).nextInt(6)];
+                                data.put("color", color);
+                                ModelListItem obj = new ModelListItem(m_Text, modelKey, color);
+                                modelsRef.document(modelKey).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        modelsItems.add(obj);
+                                        modelListAdaptor = new ModelListAdapter(getContext(), ModelsFragment.this, modelsItems);
+                                        modelsListView.setAdapter(modelListAdaptor);
+                                        filter = modelListAdaptor.getFilter();
+                                    }
+                                });
                             }
                         });
-
                     }
                 });
                 dialog.dismiss();
