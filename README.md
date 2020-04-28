@@ -5,4 +5,4 @@ It lets a user to:
 - manage model trainings
 - terminate (STOP) model trainings, remotely
 
-This app is required to be used in combination with DL-tracker Python Package (https://github.com/thevarunsharma/dl_tracker).
+This app is meant to be used in combination with DL-tracker Python Package (https://github.com/thevarunsharma/dl_tracker).
