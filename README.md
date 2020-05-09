@@ -1,5 +1,5 @@
 # DL-Tracker-App
-<img src="web_hi_res_512.png" width="300"/>
+<img src="logo_images/web_hi_res_512.png" width="300"/>
 
 An Android Application that enables a user to track and control the training of Deep-Learning models written in Tensorflow or Keras, remotely.
 It lets a user to:
